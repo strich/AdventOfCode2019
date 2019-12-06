@@ -8,7 +8,7 @@ namespace Day1
     {
         static void Main(string[] args)
         {
-            var puzzle = new Day1(Input);
+            var puzzle = new Puzzle(Input);
             Console.WriteLine($"Day 1 Puzzle 1 Answer: {puzzle.GetAnswer1()}");
             Console.WriteLine($"Day 1 Puzzle 2 Answer: {puzzle.GetAnswer2()}");
         }
@@ -118,11 +118,11 @@ namespace Day1
 ";
     }
 
-    public class Day1
+    public class Puzzle
     {
         List<int> _input;
 
-        public Day1(string input)
+        public Puzzle(string input)
         {
             _input = ParseInput(input);
         }
