@@ -9,8 +9,10 @@ namespace Day4
         static void Main(string[] args)
         {
             var puzzle = new Puzzle(Input);
-            Console.WriteLine($"Day 4 Puzzle 1 Answer: {puzzle.GetAnswer1()}");
-            Console.WriteLine($"Day 4 Puzzle 2 Answer: {puzzle.GetAnswer2()}");
+            var a1 = puzzle.GetAnswer1();
+            var a2 = puzzle.GetAnswer2();
+            Console.WriteLine($"Day 4 Puzzle 1 Answer: {a1}");
+            Console.WriteLine($"Day 4 Puzzle 2 Answer: {a2}");
         }
 
         public static string Input = @"158126-624574";
@@ -19,18 +21,6 @@ namespace Day4
     class Puzzle
     {
         (string min, string max) _input;
-
-        struct LineSegment
-        {
-            public Point A;
-            public Point B;
-        }
-
-        struct Point
-        {
-            public int X;
-            public int Y;
-        }
 
         public Puzzle(string input)
         {
@@ -43,24 +33,49 @@ namespace Day4
             return (splitStr[0], splitStr[1]);
         }
 
-        int[] _intBuffer = new int[6];
-        bool IsValidPassword(int password)
+        readonly int[] _intBuffer = new int[6];
+        bool IsValidPassword(int password, bool ignoreLargeGroups)
         {
             if (password > 1000000) return false;
             ToDigitArray(password, in _intBuffer);
 
+            var groupCount = 1;
             var hasDouble = false;
             for (int i = 0; i < _intBuffer.Length - 1; i++)
             {
                 if (_intBuffer[i] > _intBuffer[i + 1]) return false;
                 if (_intBuffer[i] == _intBuffer[i + 1])
                 {
-                    if (i + 2 < _intBuffer.Length && _intBuffer[i] == _intBuffer[i + 2])
-                    { }
+                    groupCount++;
+
+                    if(i + 2 >= _intBuffer.Length)
+                    {
+                        if (ignoreLargeGroups)
+                        {
+                            if (groupCount >= 2)
+                                hasDouble = true;
+                        }
+                        else
+                        {
+                            if (groupCount == 2)
+                                hasDouble = true;
+                        }
+                    }
+                }
+                else
+                {
+                    if (ignoreLargeGroups)
+                    {
+                        if (groupCount >= 2)
+                            hasDouble = true;
+                    }
                     else
                     {
-                        hasDouble = true;
+                        if (groupCount == 2)
+                            hasDouble = true;
                     }
+                    
+                    groupCount = 1;
                 }
             }
 
@@ -77,19 +92,32 @@ namespace Day4
             for (var i = min; i <= max; i++)
             {
                 Console.WriteLine($"Trying password [{i}]...");
-                if (IsValidPassword(i))
+                if (IsValidPassword(i, true))
                 {
                     validPasswords.Add(i);
                     Console.WriteLine($"Valid password: {i}");
                 }
             }
 
-            return validPasswords.Count();
+            return validPasswords.Count;
         }
 
         public int GetAnswer2()
         {
-            return 0;
+            int min = int.Parse(_input.min);
+            int max = int.Parse(_input.max);
+            List<int> validPasswords = new List<int>();
+            for (var i = min; i <= max; i++)
+            {
+                Console.WriteLine($"Trying password [{i}]...");
+                if (IsValidPassword(i, false))
+                {
+                    validPasswords.Add(i);
+                    Console.WriteLine($"Valid password: {i}");
+                }
+            }
+
+            return validPasswords.Count;
         }
 
         public static void ToDigitArray(int pw, in int[] result)
@@ -99,13 +127,6 @@ namespace Day4
                 result[i] = pw % 10;
                 pw /= 10;
             }
-            //while (i != 0)
-            //{
-            //    result.Add(i % 10);
-            //    i /= 10;
-            //}
-
-            //result.Reverse();
         }
     }
 }
