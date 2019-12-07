@@ -1948,15 +1948,9 @@ TJ4)ZVD
                 return shortestPathAB;
             }
 
-            for (int x = aPathToRoot.Count-1; x > commonParentIndex; x--)
-            {
-                shortestPathAB.Add(aPathToRoot[x]);
-            }
+            for (int x = aPathToRoot.Count-1; x > commonParentIndex; x--) shortestPathAB.Add(aPathToRoot[x]);
             shortestPathAB.Add(commonParent);
-            for (int x = commonParentIndex+1; x < bPathToRoot.Count; x++)
-            {
-                shortestPathAB.Add(bPathToRoot[x]);
-            }
+            for (int x = commonParentIndex+1; x < bPathToRoot.Count; x++) shortestPathAB.Add(bPathToRoot[x]);
 
             return shortestPathAB;
         }
